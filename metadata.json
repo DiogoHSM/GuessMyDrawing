@@ -1,0 +1,5 @@
+{
+  "name": "AI Sketch Guesser",
+  "description": "Um aplicativo de desenho onde a IA tenta adivinhar o que você está desenhando em tempo real e explica o raciocínio.",
+  "requestFramePermissions": []
+}
