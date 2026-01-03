@@ -1,12 +1,19 @@
-import React, { useRef, useEffect, useState, useCallback } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { Eraser, Pencil, Trash2, Undo2 } from 'lucide-react';
 
 interface DrawingCanvasProps {
   onDrawEnd: (base64Data: string) => void;
   isAnalyzing: boolean;
+  labels: {
+    pencil: string;
+    eraser: string;
+    undo: string;
+    clear: string;
+    analyzing: string;
+  };
 }
 
-const DrawingCanvas: React.FC<DrawingCanvasProps> = ({ onDrawEnd, isAnalyzing }) => {
+const DrawingCanvas: React.FC<DrawingCanvasProps> = ({ onDrawEnd, isAnalyzing, labels }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
@@ -148,14 +155,14 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({ onDrawEnd, isAnalyzing })
         <button
           onClick={() => setStrokeColor('#000000')}
           className={`p-2 rounded-lg transition-colors ${strokeColor === '#000000' ? 'bg-indigo-100 text-indigo-600' : 'hover:bg-slate-100 text-slate-600'}`}
-          title="Lápis"
+          title={labels.pencil}
         >
           <Pencil size={20} />
         </button>
         <button
           onClick={() => setStrokeColor('#FFFFFF')}
           className={`p-2 rounded-lg transition-colors ${strokeColor === '#FFFFFF' ? 'bg-indigo-100 text-indigo-600' : 'hover:bg-slate-100 text-slate-600'}`}
-          title="Borracha"
+          title={labels.eraser}
         >
           <Eraser size={20} />
         </button>
@@ -164,14 +171,14 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({ onDrawEnd, isAnalyzing })
           onClick={undo}
           disabled={history.length === 0}
           className="p-2 rounded-lg hover:bg-slate-100 text-slate-600 disabled:opacity-30 disabled:cursor-not-allowed"
-          title="Desfazer"
+          title={labels.undo}
         >
           <Undo2 size={20} />
         </button>
         <button
           onClick={clearCanvas}
           className="p-2 rounded-lg hover:bg-red-50 text-red-500"
-          title="Limpar tudo"
+          title={labels.clear}
         >
           <Trash2 size={20} />
         </button>
@@ -195,7 +202,7 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({ onDrawEnd, isAnalyzing })
          <div className="absolute top-4 right-4 z-10">
            <span className="flex items-center gap-2 px-3 py-1.5 bg-indigo-600 text-white text-xs font-medium rounded-full shadow-lg animate-pulse">
              <span className="w-2 h-2 bg-white rounded-full"></span>
-             Analisando...
+             {labels.analyzing}
            </span>
          </div>
       )}

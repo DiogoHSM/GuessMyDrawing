@@ -3,10 +3,20 @@ import { PredictionResponse } from "../types";
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-export const analyzeSketch = async (base64Image: string): Promise<PredictionResponse> => {
+const LANGUAGE_NAMES: Record<string, string> = {
+  'en': 'English',
+  'pt': 'Portuguese (Brazil)',
+  'es': 'Spanish',
+  'fr': 'French',
+  'zh': 'Chinese (Simplified)',
+};
+
+export const analyzeSketch = async (base64Image: string, langCode: string = 'en'): Promise<PredictionResponse> => {
   try {
     // Remove the data URL prefix if present
     const cleanBase64 = base64Image.replace(/^data:image\/(png|jpg|jpeg);base64,/, "");
+    
+    const targetLanguage = LANGUAGE_NAMES[langCode] || 'English';
 
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
@@ -19,7 +29,7 @@ export const analyzeSketch = async (base64Image: string): Promise<PredictionResp
             },
           },
           {
-            text: "Analise este desenho (sketch) que está sendo feito em tempo real. Identifique o que o usuário provavelmente está tentando desenhar. Forneça o nome do objeto e uma explicação curta e direta do porquê, baseando-se nas formas geométricas e linhas presentes. Responda em Português do Brasil.",
+            text: `Analyze this real-time sketch. Identify what the user is likely trying to draw. Provide the object name and a short, direct visual explanation based on geometric shapes and lines. Respond in ${targetLanguage}.`,
           },
         ],
       },
@@ -30,15 +40,15 @@ export const analyzeSketch = async (base64Image: string): Promise<PredictionResp
           properties: {
             guess: {
               type: Type.STRING,
-              description: "O nome do objeto que está sendo desenhado (ex: Casa, Árvore, Carro).",
+              description: `The name of the object being drawn (e.g., House, Tree) in ${targetLanguage}.`,
             },
             reasoning: {
               type: Type.STRING,
-              description: "Explicação visual do porquê (ex: 'Vejo um quadrado com um triângulo em cima, sugerindo o telhado de uma casa').",
+              description: `Visual explanation of why (e.g., 'I see a square with a triangle on top') in ${targetLanguage}.`,
             },
             confidence: {
               type: Type.NUMBER,
-              description: "Um número de 0 a 100 indicando quão certo você está.",
+              description: "A number from 0 to 100 indicating confidence.",
             },
           },
           required: ["guess", "reasoning", "confidence"],
@@ -55,7 +65,7 @@ export const analyzeSketch = async (base64Image: string): Promise<PredictionResp
     console.error("Error analyzing sketch:", error);
     return {
       guess: "...",
-      reasoning: "Ainda estou tentando entender seus traços.",
+      reasoning: "...",
       confidence: 0,
     };
   }
