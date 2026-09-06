@@ -110,6 +110,14 @@ const TRANSLATIONS = {
 
 type LanguageCode = keyof typeof TRANSLATIONS;
 
+const FLAGS: Record<LanguageCode, string> = {
+  en: '🇺🇸',
+  pt: '🇧🇷',
+  es: '🇪🇸',
+  fr: '🇫🇷',
+  zh: '🇨🇳'
+};
+
 const App: React.FC = () => {
   const [prediction, setPrediction] = useState<PredictionResponse | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -162,7 +170,20 @@ const App: React.FC = () => {
       {/* Mobile Header */}
       <div className="md:hidden bg-white p-4 border-b border-slate-200 flex justify-between items-center z-20">
         <h1 className="font-bold text-lg text-slate-800">{t.appTitle}</h1>
-        <div className="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded font-medium">Gemini 3.0</div>
+        <div className="flex items-center gap-2">
+          <select 
+            value={language} 
+            onChange={(e) => setLanguage(e.target.value as LanguageCode)}
+            className="text-lg bg-transparent border-none outline-none cursor-pointer"
+          >
+            {Object.keys(FLAGS).map((code) => (
+              <option key={code} value={code}>
+                {FLAGS[code as LanguageCode]}
+              </option>
+            ))}
+          </select>
+          <div className="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded font-medium">Gemini Lite</div>
+        </div>
       </div>
 
       {/* Main Drawing Area */}
@@ -180,8 +201,20 @@ const App: React.FC = () => {
         <div className="hidden md:flex items-center justify-between p-6 border-b border-slate-200 bg-white">
           <div>
             <h1 className="font-bold text-xl text-slate-800">{t.appTitle}</h1>
-            <p className="text-xs text-slate-500 mt-1">Powered by Gemini 3.0 Flash</p>
+            <p className="text-xs text-slate-500 mt-1">Powered by Gemini 3.1 Lite</p>
           </div>
+          
+          <select 
+            value={language} 
+            onChange={(e) => setLanguage(e.target.value as LanguageCode)}
+            className="text-xl bg-slate-100 rounded-md py-1 px-2 border-slate-200 cursor-pointer outline-none hover:bg-slate-200 transition-colors"
+          >
+            {Object.keys(FLAGS).map((code) => (
+              <option key={code} value={code}>
+                {FLAGS[code as LanguageCode]}
+              </option>
+            ))}
+          </select>
         </div>
 
         {/* Content */}
